@@ -2514,6 +2514,16 @@ impl<T: Storage> Raft<T> {
             .raft_log
             .maybe_append(m.index, m.log_term, m.commit, &m.entries)
         {
+            // NOTE: 以下はメッセージに含まれれるエントリの各contentフィールドを
+            // レスポンスメッセージのcontentフィールドにコピーするための追加処理
+            // ここから
+            let entries_context: Vec<u8> = m.entries.iter()
+                .map(|e| e.get_context().to_vec())
+                .flatten()
+                .collect();
+            warn!(self.logger, "entries_context: {:?}", entries_context);
+            to_send.set_context(entries_context.into());
+            // ここまで
             to_send.set_index(last_idx);
         } else {
             debug!(
