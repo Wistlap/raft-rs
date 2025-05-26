@@ -2521,7 +2521,7 @@ impl<T: Storage> Raft<T> {
                 .map(|e| e.get_context().to_vec())
                 .flatten()
                 .collect();
-            warn!(self.logger, "entries_context: {:?}", entries_context);
+            debug!(self.logger, "entries_context: {:?}", entries_context);
             to_send.set_context(entries_context.into());
             // ここまで
             to_send.set_index(last_idx);
